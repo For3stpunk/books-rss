@@ -269,7 +269,12 @@ def fetch_all():
     ok, skipped = 0, 0
     for category, sources in FEEDS.items():
         for name, url in sources.items():
-            parsed = feedparser.parse(url)
+            try:
+                parsed = feedparser.parse(url)
+            except Exception as e:
+                print(f"  [skip] {name}: crashed instead of erroring cleanly ({e!r})")
+                skipped += 1
+                continue
             if parsed.bozo and not parsed.entries:
                 print(f"  [skip] {name}: could not parse ({parsed.bozo_exception})")
                 skipped += 1
