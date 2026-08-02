@@ -45,8 +45,17 @@ Deliberately excluded categories:
 
 import feedparser
 import html
+import socket
 from datetime import datetime, timezone
 from email.utils import format_datetime
+
+# feedparser has NO default timeout -- without this, a single feed that
+# accepts a connection but never responds (common among the `# verify`
+# guesses below) can hang the whole run indefinitely instead of just
+# failing fast. 10s is generous for a normal feed and still keeps a
+# worst-case full run (all 133 feeds hanging) under ~25 minutes instead
+# of unbounded.
+socket.setdefaulttimeout(10)
 
 FEEDS = {
 
